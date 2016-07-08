@@ -55,6 +55,8 @@ define([
         progressMsg: "",
         inputValue: "",
         async: "",
+        showAsPassword:"",
+        placeholderText:"",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _contextObj: null,
@@ -64,13 +66,17 @@ define([
         constructor: function() {
             // Uncomment the following line to enable debug messages
             //logger.level(logger.DEBUG);
-            logger.debug(this.id + ".constructor ");
+            logger.debug(this.id + ".constructor ");        
+            
+            
         },
 
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate ");
             this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this, this.onEnterClick));
+            this.inputBox.placeholder = this.placeholderText;
+            if (this.showAsPassword) this.inputBox.type="password";
         },
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
