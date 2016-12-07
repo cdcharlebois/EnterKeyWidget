@@ -21,6 +21,7 @@ The following options can be configured:
 - Asynchronous: If set to true, the microflow will be triggered as an asynchronous microflow.
 - Show progress: If set to true, shows a standard Mendix 'loading' indicator
 - Progress message: The message shows in the loading indicator. Not shown if 'show progress' is set to false.
+- Placeholder text: Set a text to be shown as placeholder in case the input field is empty.
 
 ### Known bugs
 
