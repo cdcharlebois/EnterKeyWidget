@@ -32,10 +32,11 @@ define([
     "dojo/text",
     "dojo/html",
     "dojo/keys",
+    "dojo/dom-attr",
     "dojo/_base/event",
     "TextBoxEnterKey/lib/jquery-1.11.2",
     "dojo/text!TextBoxEnterKey/widget/template/TextBoxEnterKey.html"
-], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoHtml, dojoKeys, dojoEvent, _jQuery, widgetTemplate) {
+], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp, dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang, dojoText, dojoHtml, dojoKeys, dojoAttr, dojoEvent, _jQuery, widgetTemplate) {
     "use strict";
 
     var $ = _jQuery.noConflict(true);
@@ -55,6 +56,7 @@ define([
         progressMsg: "",
         inputValue: "",
         async: "",
+        placeholder: "",
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _contextObj: null,
@@ -70,13 +72,17 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate ");
-            this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this, this.onEnterClick));
+            this.connect(this.inputBox, "onkeydown", dojoLang.hitch(this, this.onEnterClick));                
+            if (!this._isEmptyString(this.placeholder)) {
+                    dojoAttr.set(this.inputBox, "placeholder", this.placeholder);
+                }
         },
 
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
             logger.debug(this.id + ".update ");
-                 if (obj !== null) {
+
+             if (obj !== null) {
             this.obj = obj;
             this.inputBox.value = this.obj.get(this.inputValue);
             }
@@ -97,6 +103,11 @@ define([
             }
          }
      },
+        
+                _isEmptyString: function (str) {
+            return (!str || 0 === str.trim().length);
+        },
+
         
          executeMicroflow : function (mf, async, showProgress) {
             if (mf && this.obj) {
