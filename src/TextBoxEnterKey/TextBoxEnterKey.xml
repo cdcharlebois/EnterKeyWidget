@@ -35,6 +35,11 @@
              <category>Settings</category>    
              <description>Progress bar message (only visible if 'Show progress' is true)</description>    
         </property>
+        <property key="placeholder" type="string" required="false" defaultValue="">
+            <caption>Placeholder text</caption>
+            <category>Settings</category>
+            <description>Placeholder for when the input field is empty</description>
+        </property>
     </properties>
 </widget>
 

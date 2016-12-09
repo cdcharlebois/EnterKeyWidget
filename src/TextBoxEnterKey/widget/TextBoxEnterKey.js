@@ -76,9 +76,10 @@ define([
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
             logger.debug(this.id + ".update ");
+                 if (obj !== null) {
             this.obj = obj;
-            //this._updateRendering();
-
+            this.inputBox.value = this.obj.get(this.inputValue);
+            }
             callback();
         },
 
