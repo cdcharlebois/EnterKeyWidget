@@ -72,7 +72,8 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate ");
-            this.connect(this.inputBox, "onkeydown", dojoLang.hitch(this, this.onEnterClick));                
+            this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this, this.inputClick));        
+            this.connect(this.inputBox, "onkeydown", dojoLang.hitch(this, this.onEnterClick)); 
             if (!this._isEmptyString(this.placeholder)) {
                     dojoAttr.set(this.inputBox, "placeholder", this.placeholder);
                 }
@@ -95,8 +96,13 @@ define([
             // Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
         },
         
+        inputClick: function(event) {
+              if (event.keyCode != dojoKeys.ENTER) {
+                    this.obj.set(this.inputValue, this.inputBox.value);
+            }
+        },
+            
         onEnterClick: function(event) {
-            this.obj.set(this.inputValue, this.inputBox.value);
             if (event.keyCode == dojoKeys.ENTER) {
              if (this.mfToExecute !== "") {  
                  this.executeMicroflow(this.mfToExecute, this.async, this.progressBar);
