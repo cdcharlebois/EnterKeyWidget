@@ -49,6 +49,7 @@ define([
         // DOM elements
         inputBox: null,
         obj: null,
+        subHandle: null,
 
         // Parameters configured in the Modeler.
         mfToExecute: "",
@@ -57,6 +58,7 @@ define([
         inputValue: "",
         async: "",
         placeholder: "",
+        
 
         // Internal variables. Non-primitives created in the prototype are shared between all widget instances.
         _contextObj: null,
@@ -72,8 +74,7 @@ define([
         // dijit._WidgetBase.postCreate is called after constructing the widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate ");
-            this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this, this.inputClick));        
-            this.connect(this.inputBox, "onkeydown", dojoLang.hitch(this, this.onEnterClick)); 
+            this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this, this.onEnterClick));                
             if (!this._isEmptyString(this.placeholder)) {
                     dojoAttr.set(this.inputBox, "placeholder", this.placeholder);
                 }
@@ -82,12 +83,15 @@ define([
         // mxui.widget._WidgetBase.update is called when context is changed or initialized. Implement to re-render and / or fetch data.
         update: function(obj, callback) {
             logger.debug(this.id + ".update ");
-
-             if (obj !== null) {
-            this.obj = obj;
-            this.inputBox.value = this.obj.get(this.inputValue);
+            this.obj = obj;                      
+            if (this.obj) {
+                // in some cases update may be called with a null obj
+                this.changeInput();
             }
-            callback();
+
+            if (callback) {
+                callback();
+            }
         },
 
         // mxui.widget._WidgetBase.uninitialize is called when the widget is destroyed. Implement to do special tear-down work.
@@ -96,13 +100,13 @@ define([
             // Clean up listeners, helper objects, etc. There is no need to remove listeners added with this.connect / this.subscribe / this.own.
         },
         
-        inputClick: function(event) {
-              if (event.keyCode != dojoKeys.ENTER) {
-                    this.obj.set(this.inputValue, this.inputBox.value);
-            }
+           changeInput: function() {
+            this.inputBox.value = this.obj.get(this.inputValue);
         },
-            
+        
         onEnterClick: function(event) {
+            console.log(event.key);
+            this.obj.set(this.inputValue, this.inputBox.value);
             if (event.keyCode == dojoKeys.ENTER) {
              if (this.mfToExecute !== "") {  
                  this.executeMicroflow(this.mfToExecute, this.async, this.progressBar);
@@ -131,11 +135,12 @@ define([
                         guids       : [this.obj.getGuid()],
                         
                     },
-                    callback: function () {
+                    callback: dojoLang.hitch(this, function () {
+                        this.changeInput(); 
                         if (showProgress) {
                         mx.ui.hideProgress(pid);
                         }
-                    },
+                    }),
                     error: function () {
                         logger.error("TextBoxEnterKey.widget.TextBoxEnterKey.triggerMicroFlow: XAS error executing microflow");
                         if (showProgress) {   
