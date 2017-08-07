@@ -4,8 +4,8 @@
     ========================
 
     @file      : TextBoxEnterKey.js
-    @version   : 1.0
-    @author    : Christiaan Westgeest
+    @version   : 1.1
+    @author    : Christiaan Westgeest, Emile Broeders
     @date      : Fri, 26 Feb 2016 10:42:29 GMT
     @copyright :
     @license   :
@@ -15,34 +15,16 @@
     Describe your widget here.
 */
 
-// Required module list. Remove unnecessary modules, you can always get them
-// back from the boilerplate.
 define([
     "dojo/_base/declare",
     "mxui/widget/_WidgetBase",
     "dijit/_TemplatedMixin",
-    "mxui/dom",
-    "dojo/dom",
-    "dojo/dom-prop",
-    "dojo/dom-geometry",
-    "dojo/dom-class",
-    "dojo/dom-style",
-    "dojo/dom-construct",
-    "dojo/_base/array",
-    "dojo/_base/lang",
-    "dojo/text",
-    "dojo/html",
     "dojo/keys",
     "dojo/dom-attr",
-    "dojo/_base/event",
-    "TextBoxEnterKey/lib/jquery-1.11.2",
     "dojo/text!TextBoxEnterKey/widget/template/TextBoxEnterKey.html"
-], function(declare, _WidgetBase, _TemplatedMixin, dom, dojoDom, dojoProp,
-  dojoGeometry, dojoClass, dojoStyle, dojoConstruct, dojoArray, dojoLang,
-  dojoText, dojoHtml, dojoKeys, dojoAttr, dojoEvent, _jQuery, widgetTemplate) {
+], function(declare, _WidgetBase, _TemplatedMixin, dojoKeys, dojoAttr,
+  widgetTemplate) {
     "use strict";
-
-    var $ = _jQuery.noConflict(true);
 
     // Declare widget's prototype.
     return declare("TextBoxEnterKey.widget.TextBoxEnterKey", [ _WidgetBase,
@@ -82,10 +64,10 @@ define([
         // widget. Implement to do extra setup work.
         postCreate: function() {
             logger.debug(this.id + ".postCreate ");
-            this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this,
-                  this.onEnterClick));
-            this.connect(this.resetButton, "onclick", dojoLang.hitch(this,
-                  this.resetForm));
+            this.connect(this.inputBox, "onkeyup",
+                this.onEnterClick.bind(this));
+            this.connect(this.resetButton, "onclick",
+                this.resetForm.bind(this));
             if (!this._isEmptyString(this.placeholder)) {
                     dojoAttr.set(this.inputBox, "placeholder",
                         this.placeholder);
@@ -155,12 +137,12 @@ define([
                 applyto     : "selection",
                 guids       : [this.obj.getGuid()],
               },
-              callback: dojoLang.hitch(this, function () {
+              callback: (function () {
                 this.changeInput();
                 if (showProgress) {
                   mx.ui.hideProgress(pid);
                 }
-              }),
+              }).bind(this),
               error: function () {
                 if (showProgress) {
                   mx.ui.hideProgress(pid);
