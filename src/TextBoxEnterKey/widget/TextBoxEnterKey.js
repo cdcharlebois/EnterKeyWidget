@@ -52,6 +52,7 @@ define([
 
         // DOM elements
         inputBox: null,
+        resetButton: null,
         obj: null,
         subHandle: null,
 
@@ -83,6 +84,8 @@ define([
             logger.debug(this.id + ".postCreate ");
             this.connect(this.inputBox, "onkeyup", dojoLang.hitch(this,
                   this.onEnterClick));
+            this.connect(this.resetButton, "onclick", dojoLang.hitch(this,
+                  this.resetForm));
             if (!this._isEmptyString(this.placeholder)) {
                     dojoAttr.set(this.inputBox, "placeholder",
                         this.placeholder);
@@ -126,7 +129,11 @@ define([
                   this.progressBar);
             }
           }
-       },
+        },
+
+        resetForm: function(event) {
+          this.inputBox.value = "";
+        },
 
        _isEmptyString: function (str) {
           return (!str || 0 === str.trim().length);
